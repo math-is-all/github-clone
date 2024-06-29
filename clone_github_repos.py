@@ -1,14 +1,17 @@
 import os
 import subprocess
-import requests
+import json
+import urllib3
 
 def get_github_repos(user):
+    http = urllib3.PoolManager()
     url = f"https://api.github.com/users/{user}/repos"
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise Exception(f"Error fetching repositories for user {user}: {response.status_code}")
+    response = http.request('GET', url)
     
-    repos = response.json()
+    if response.status != 200:
+        raise Exception(f"Error fetching repositories for user {user}: {response.status}")
+    
+    repos = json.loads(response.data.decode('utf-8'))
     return [repo['clone_url'] for repo in repos]
 
 def clone_repo(clone_url, clone_dir):
