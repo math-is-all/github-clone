@@ -7,10 +7,10 @@
 python -m venv venv 
 ./venv/bin/activate
 pip install urllib3
-python clone_github_repos.py -u 用户名 -o 保存的位置
+python clone_github_repos.py -u 用户名 -o 保存的位置 -t 仓库类型 #当缺省时会通过交互的方式获取参数
 ```
 
-
+仓库类型有：all, starred, forked, original
 
 
 
