@@ -2,6 +2,7 @@ import os
 import subprocess
 import json
 import urllib3
+import argparse
 
 def get_github_repos(user):
     http = urllib3.PoolManager()
@@ -20,8 +21,20 @@ def clone_repo(clone_url, clone_dir):
     subprocess.run(["git", "clone", clone_url], cwd=clone_dir)
 
 def main():
-    github_user = input("请输入GitHub用户名: ")
-    clone_directory = input("请输入克隆到本地的目录: ")
+    parser = argparse.ArgumentParser(description="Clone all public repositories of a GitHub user.")
+    parser.add_argument('-u', '--username', help='GitHub username')
+    parser.add_argument('-o', '--output', help='Directory to clone the repositories into')
+
+    args = parser.parse_args()
+
+    github_user = args.username
+    clone_directory = args.output
+
+    if not github_user:
+        github_user = input("请输入GitHub用户名: ")
+    
+    if not clone_directory:
+        clone_directory = input("请输入克隆到本地的目录: ")
 
     print(f"正在获取用户 {github_user} 的公开仓库...")
     repos = get_github_repos(github_user)

@@ -7,7 +7,7 @@
 python -m venv venv 
 ./venv/bin/activate
 pip install urllib3
-python clone_github_repos.py
+python clone_github_repos.py -u 用户名 -o 保存的位置
 ```
 
 
