@@ -18,18 +18,24 @@ def get_github_repos(user, repo_type):
     repos = json.loads(response.data.decode('utf-8'))
     
     if repo_type == "all":
-        return [repo['clone_url'] for repo in repos]
+        return repos
     elif repo_type == "starred":
-        return [repo['clone_url'] for repo in repos]
+        return repos
     elif repo_type == "forked":
-        return [repo['clone_url'] for repo in repos if repo['fork']]
+        return [repo for repo in repos if repo['fork']]
     elif repo_type == "original":
-        return [repo['clone_url'] for repo in repos if not repo['fork']]
+        return [repo for repo in repos if not repo['fork']]
 
-def clone_repo(clone_url, clone_dir):
+def clone_repo(repo, clone_base_dir):
+    owner = repo['owner']['login']
+    name = repo['name']
+    clone_url = repo['clone_url']
+    clone_dir = os.path.join(clone_base_dir, owner, name)
+
     if not os.path.exists(clone_dir):
         os.makedirs(clone_dir)
-    subprocess.run(["git", "clone", clone_url], cwd=clone_dir)
+    
+    subprocess.run(["git", "clone", clone_url, clone_dir])
 
 def main():
     parser = argparse.ArgumentParser(description="Clone repositories of a GitHub user.")
@@ -58,7 +64,7 @@ def main():
     print(f"找到 {len(repos)} 个仓库.")
     
     for repo in repos:
-        print(f"正在克隆仓库: {repo}")
+        print(f"正在克隆仓库: {repo['clone_url']}")
         clone_repo(repo, clone_directory)
     
     print("所有仓库已克隆完成.")
